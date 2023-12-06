@@ -1,30 +1,20 @@
-%% set up
-
 clear; 
+
 seed = 1; 
-R = 50; % number of simulations
+R = 50; % number of simulations 
 w = -7; % smoothing parameter
 
 tic;
 
 rng(seed)
 
-set_up % generate a search dataset, save in data.mat
-
-load('data.mat')
+monte_carlo_data % generate a search dataset, save in data.mat
 
 % table with (normalized) search cost and reservation utility
-curve = importdata('tableData.csv');
+curve = importdata('curve_seq_search.csv');
 
-%% MLE  estimation for Monte Carlo
-
-%draw eps for each consumer-firm combination
-eps = randn(length(consumer_id),1);
-%draw eps for outside option
-eps0 = randn(length(unique(consumer_id)),1);
-
-% simulate data
-[yd, yt, order] = gen_seq_search(pos, z, consumer_id, theta_true, eps, eps0, curve);
+% load monte carlo data 
+load('data.mat')
 
 data = [consumer_id, pos, z, yd, yt, order];
 data = sortrows(data, [1,-9,11]); % sort by consumer_id and order of clicks
@@ -39,8 +29,28 @@ eps_draw = randn(length(consumer_id),R);
 %draw eps for outside option
 eps0_draw = randn(length(unique(consumer_id)),R);
 
+% 1st column are parameter names.
+% 2nd and 3rd columns are lower and upper bounds of parameter space Theta.
+
+Theta = {
+           '\beta_1'   -0.5,   0.5     % coefficient (stars)
+           '\beta_2'   -0.5,   0.5     % coefficient (review score)
+           '\beta_3'   -0.5,   0.5     % coefficient (loc score)
+           '\beta_4'   -0.5,   0.5     % coefficient (chain)
+           '\beta_5'   -0.5,   0.5     % coefficient (promotion)
+           '\beta_6'   -0.5,   0.5     % coefficient (price)
+           '\eta'       2.0,   5.0     % outside good
+           '\delta_0'  -5.0,  -2.0     % search cost base
+           '\delta_1'  -0.25,  0.25    % search cost position
+          };
+
+label_name = Theta(:,1)';
+lb = cell2mat(Theta(:,2))';
+ub = cell2mat(Theta(:,3))';
+
 %initial parameter vector
 be0 = (ub + lb)/2;
+
 
 % options for estimation
 options = optimoptions( 'fmincon',...

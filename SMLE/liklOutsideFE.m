@@ -1,4 +1,6 @@
-% the likelihood function is adapted from the replication code of Ursu "The Power of Rankings"
+%Matlab replication code--RMUrsu "The Power of Rankings"
+
+%likelihood function
 
 function loglik = liklOutsideFE(be, pos, X, consumer_id, yd, yt, R, w, eps_draw,eps0_draw,curve)
 
@@ -26,12 +28,14 @@ sz = size(curve,1);
 pos_unique = sort(unique(pos));
 m_pos = zeros(length(pos_unique),1);
 for i = 1:length(pos_unique)
-    c_i = exp(constc + log(i).*bepos); % search cost
+%     c_i = exp(constc + i.*bepos);
+    c_i = exp(constc + log(i).*bepos);
     if c_i<curve(1,2) && c_i>=curve(sz,2)
         for n = 2:length(curve)
             if (curve(n,2) == c_i)
                 m_pos(i) = curve(n,1);
             elseif ((curve(n-1,2)>c_i)&& (c_i>curve(n,2)))
+%                m_pos(i) = (curve(n,1) + curve(n-1,1))/2;
                 m_pos(i) = curve(n,1) + (c_i - curve(n,2))/(curve(n-1,2)-curve(n,2))...
                     *(curve(n-1,1) - curve(n,1));
             end
