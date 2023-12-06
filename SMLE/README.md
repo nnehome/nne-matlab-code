@@ -1,6 +1,4 @@
-# SMLE Estimation
-
----------------
+## SMLE Estimation
 
 These Matlab code files implement the simulated maximum likelihood (SMLE) using the smoothed likelihood approach to estimate sequential search model.
 
