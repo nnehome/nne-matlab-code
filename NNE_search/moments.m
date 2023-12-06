@@ -27,7 +27,6 @@ ytn = accumarray(consumer_id, yt); % consumer-level purchase
 y_tilde = [ydn>1, ydn, ytn]; % consumer-level outcomes
 
 % consumer-level average of x
-% x_bar = splitapply(@mean, x, consumer_id);
 x_sum = arrayfun(@(i)accumarray(consumer_id, x(:,i)), 1:size(x,2), 'uni', false);
 x_bar = cell2mat(x_sum)./accumarray(consumer_id, 1);
 
@@ -35,14 +34,14 @@ x_bar = cell2mat(x_sum)./accumarray(consumer_id, 1);
 m1 = mean(y);
 
 % cross-covariances between y and x
-m2 = (y - mean(y))'*x/rows;
+m2 = (y - mean(y))'*(x - mean(x))/rows;
 m2 = m2(:)';
 
 % mean vector of y_tilde
 m3 = mean(y_tilde);
 
 % cross-covariances between y_tilde and x_bar
-m4 = (y_tilde - mean(y_tilde))'*x_bar/rows;
+m4 = (y_tilde - mean(y_tilde))'*(x_bar - mean(x_bar))/rows;
 m4 = m4(:)';
 
 % covariance matrix of y_tilde
